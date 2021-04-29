@@ -82,7 +82,7 @@ public class PlayerInventoryController
     public void OnMoveStarted(ItemSlot slot)
     {
         EquipmentSlot equipmentSlot = slot as EquipmentSlot; 
-        if(equipmentSlot ==null && slot.SlotItem!=null)
+        if(equipmentSlot == null || slot.SlotItem != null)
             slot.RightPointerClicked -= OnItemUsed;
 
         if (_lastClickedSlot != null)
@@ -90,6 +90,7 @@ public class PlayerInventoryController
             _newClickedSlot = slot;
             return;
         }
+
         if(slot.SlotItem != null)
         {
             _clickTime = Time.time;
@@ -114,6 +115,7 @@ public class PlayerInventoryController
     private void EndMove(bool tryToMove)
     {
         Item newItem = null;
+
         if (tryToMove)
         {
             if (_player.PlayerWindow.PointerOverWindow)
@@ -121,13 +123,13 @@ public class PlayerInventoryController
                 if (_newClickedSlot != null)
                 {
                     EquipmentSlot equipmentSlot = _newClickedSlot as EquipmentSlot;
-                    if(equipmentSlot!=null)
+                    if (equipmentSlot != null)
                     {
-                       if(_newClickedSlot.SlotInteractable)
-                       {
+                        if (_newClickedSlot.SlotInteractable)
+                        {
                             newItem = equipmentSlot.SlotItem;
                             _player.PlayerEquipmentController.EquipItem(equipmentSlot.EquipmentSlotType, _movingItem as Equipment, false);
-                       }
+                        }
                     }
                     else
                     {
@@ -140,7 +142,7 @@ public class PlayerInventoryController
                 {
                     return;
                 }
-                if(newItem != null)
+                if (newItem != null)
                 {
                     SetNewMovingItem(newItem);
                     return;
@@ -152,14 +154,25 @@ public class PlayerInventoryController
             }
         }
         else
-        {
-            _lastClickedSlot.AddItemToSlot(_movingItem);
-            _lastClickedSlot.RightPointerClicked += OnItemUsed;
-        }
+            ReturnItemToPreviousSlot();
+
         _lastClickedSlot = null;
         _newClickedSlot = null;
         _movingItem = null;
         _player.PlayerInventoryUI.MovingImage.color = Color.clear;
         _player.PlayerInventoryUI.MovingImage.sprite = null;
+    }
+
+    private void ReturnItemToPreviousSlot()
+    {
+        if (_lastClickedSlot is EquipmentSlot)
+        {
+            _player.PlayerEquipmentController.EquipItem(_movingItem as Equipment);
+        }
+        else
+        {
+            _lastClickedSlot.AddItemToSlot(_movingItem);
+            _lastClickedSlot.RightPointerClicked += OnItemUsed;
+        }
     }
 }

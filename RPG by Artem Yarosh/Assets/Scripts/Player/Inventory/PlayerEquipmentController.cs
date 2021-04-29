@@ -38,6 +38,8 @@ public class PlayerEquipmentController
         EquipItem(slotType, equipment);
     }
 
+
+
     public void EquipItem(EquipmentSlotType slotType, Equipment equipment, bool removeToInventory = true)
     {
         if (slotType == EquipmentSlotType.None || equipment == null)
@@ -62,11 +64,12 @@ public class PlayerEquipmentController
         slot.RemoveItem();
         
         _currentEquipment[slotType] = null;
+
+        slot.RightPointerClicked -= RemoveItem;
     }
 
     private void RemoveItem(ItemSlot slot)
     {
-        slot.RightPointerClicked -= RemoveItem;
         TryToRemoveEquipment((slot as EquipmentSlot).EquipmentSlotType, true);
     }
 

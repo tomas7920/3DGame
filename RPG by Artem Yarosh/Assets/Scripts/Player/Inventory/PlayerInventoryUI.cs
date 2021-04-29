@@ -23,7 +23,7 @@ public class PlayerInventoryUI : MonoBehaviour
         {
             if(!BaseInentroySlots[i].IsEquiped)
             {
-               Debug.Log("Pick Up a Sword");
+               Debug.Log(i);
                return  BaseInentroySlots[i];
             }
         }
